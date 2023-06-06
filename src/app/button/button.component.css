@@ -1,0 +1,17 @@
+button {
+  display: inline-block;
+  width: 10rem;
+  height: 10rem;
+  outline: none;
+  border-radius: 50%;
+  border: none;
+  box-shadow: 0.4rem 1rem #aaa;
+  font-size: 2rem;
+  cursor: pointer;
+  color: white;
+}
+
+button:active {
+  box-shadow: 0.3rem 0.6rem #666;
+  transform: translate(0.1rem, 0.4rem);
+}

@@ -1,0 +1,10 @@
+<h1>{{ title }}</h1>
+
+<div class="gameInfo">
+  <p>highscore: {{ highscore }}</p>
+</div>
+
+<section class="buttons">
+  <app-button [(highscore)]="highscore"></app-button>
+  <app-button [(highscore)]="highscore"></app-button>
+</section>

@@ -1,0 +1,18 @@
+h1 {
+  font-size: 4rem;
+  text-align: center;
+}
+
+.gameInfo {
+  text-align: center;
+}
+
+.buttons {
+  position: fixed;
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100vh;
+}
