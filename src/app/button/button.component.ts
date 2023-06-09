@@ -1,11 +1,13 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-
+import { Store } from '@ngrx/store';
+import { addReset, addZeros } from '../game.actions';
 @Component({
   selector: 'app-button',
   templateUrl: './button.component.html',
   styleUrls: ['./button.component.css'],
 })
 export class ButtonComponent {
+  constructor(private store: Store<{ resets: number }>) {}
   score = 0;
   @Input() highscore!: number;
   @Output() highscoreChange = new EventEmitter<number>();
@@ -22,28 +24,37 @@ export class ButtonComponent {
     '%);';
 
   buttonPress() {
-    if (!isSuccessful(this.chance)) {
-      this.score = 0;
-      this.chance = 99;
-      this.resets++;
-      this.zeros++;
+    if (!this.#isSuccessful(this.chance)) {
+      this.#reset();
       return;
     }
     this.chance -= this.chanceReduction;
     this.score++;
-    this.zeros += countZeros(this.score);
+
+    this.#addZeros(this.score);
     if (this.highscore < this.score) {
       this.highscore = this.score;
       this.highscoreChange.emit(this.highscore);
     }
   }
-}
+  #addZeros(num: number): void {
+    let str = '' + num;
+    const zeros = (str.match(/0/g) || []).length;
+    if (zeros !== 0) {
+      this.zeros += zeros;
+      this.store.dispatch(addZeros({ amount: zeros }));
+    }
+  }
 
-function isSuccessful(chance: number): boolean {
-  return Math.random() < chance / 100;
-}
+  #isSuccessful(chance: number): boolean {
+    return Math.random() < chance / 100;
+  }
 
-function countZeros(num: number): number {
-  let str = '' + num;
-  return (str.match(/0/g) || []).length;
+  #reset() {
+    this.score = 0;
+    this.chance = 99;
+    this.store.dispatch(addReset());
+    this.resets++;
+    this.#addZeros(this.score);
+  }
 }

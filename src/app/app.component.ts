@@ -1,4 +1,7 @@
 import { Component } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs';
+import { State } from './game.reducer';
 
 @Component({
   selector: 'app-root',
@@ -6,48 +9,24 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css'],
 })
 export class AppComponent {
+  game$: Observable<State>;
+
+  constructor(private store: Store<{ game: State }>) {
+    this.game$ = this.store.select('game');
+    this.game$.subscribe((state) => {
+      this.resets = state.resets;
+      this.zeros = state.zeros;
+    });
+  }
+  resets = 0;
   title = 'Buttons';
   score = 0;
   highscore = 0;
   chance = 99;
   chanceReduction = 10;
-  resets = 0;
-  zeros = 1;
-  LowerChanceReductionLevel = 0;
-  LowerChanceReductionCost = 1;
+  zeros = 0;
 
-  buttonPress() {
-    if (!isSuccessful(this.chance)) {
-      this.score = 0;
-      this.chance = 99;
-      this.resets++;
-      this.zeros++;
-      return;
-    }
-    this.chance -= this.chanceReduction;
-    this.score++;
-    this.zeros += countZeros(this.score);
-    if (this.highscore < this.score) {
-      this.highscore = this.score;
-    }
+  addZeros(count: number) {
+    this.zeros += count;
   }
-
-  buyLowerChanceReductionLevel() {
-    if (this.zeros < this.LowerChanceReductionCost) return;
-    this.zeros -= this.LowerChanceReductionCost;
-    this.chanceReduction *= 0.9;
-    this.LowerChanceReductionLevel++;
-    this.LowerChanceReductionCost = Math.ceil(
-      1.5 ** this.LowerChanceReductionLevel
-    );
-  }
-}
-
-function isSuccessful(chance: number): boolean {
-  return Math.random() < chance / 100;
-}
-
-function countZeros(num: number): number {
-  let str = '' + num;
-  return (str.match(/0/g) || []).length;
 }
